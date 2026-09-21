@@ -1,0 +1,457 @@
+{
+  "protocol_id": "chest_pain",
+  "display_name": "흉통",
+  "choice_description": "Chest pain, chest pressure, or chest discomfort as the chief complaint",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "cp_rf_001",
+      "text": "찢어지는 양상의 통증 여부 확인 (대동맥박리 고려)",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the pain is described as tearing or ripping",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_rf_002",
+      "text": "등 또는 견갑간 방사 통증 여부 확인 (대동맥박리 고려)",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the pain radiates to the back",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_rf_003",
+      "text": "급성관동맥증후군 가능성: 12유도 심전도 즉시 시행 여부 확인",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text describes a presentation consistent with possible acute coronary syndrome",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_rf_004",
+      "text": "호흡곤란 동반 여부 확인 (폐색전증·심부전 고려)",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the patient has shortness of breath",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_rf_005",
+      "text": "실신 또는 전실신 동반 여부 확인",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the patient fainted or nearly fainted",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_rf_006",
+      "text": "저혈압 (수축기 < 90) 여부 확인: 쇼크 징후 평가",
+      "severity": "red_flag",
+      "jev_question": "The field vitals_flags.sbp_under_90 is true",
+      "requires_state": [
+        "vitals_flags"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "vitals_flags.sbp_under_90"
+    },
+    {
+      "id": "cp_rf_007",
+      "text": "저산소 (SpO2 < 92%) 여부 확인",
+      "severity": "red_flag",
+      "jev_question": "The field vitals_flags.spo2_under_92 is true",
+      "requires_state": [
+        "vitals_flags"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "vitals_flags.spo2_under_92"
+    },
+    {
+      "id": "cp_rf_008",
+      "text": "발생 즉시 최대 강도에 도달한 급성 통증 여부 확인",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the pain reached its maximum intensity within seconds of onset",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_im_001",
+      "text": "압박감·조이는 양상의 흉부 불편감 여부 확인",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the chest discomfort feels like pressure or squeezing",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_im_002",
+      "text": "팔·턱·목으로 방사되는 통증 여부 확인",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the pain radiates to the arm, jaw, or neck",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_im_003",
+      "text": "식은땀·오심 동반 여부 확인",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the patient has cold sweats or nausea with the pain",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_im_004",
+      "text": "운동·활동 시 유발되는 통증 여부 확인",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the pain is brought on by physical exertion",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_im_005",
+      "text": "호흡 시 악화되는 흉막성 통증 여부 확인",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the pain worsens with breathing",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_im_006",
+      "text": "앞으로 숙이면 완화되는 통증 여부 확인 (심낭염 고려)",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the pain improves when leaning forward",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_im_007",
+      "text": "편측 하지 부종·통증 여부 확인 (심부정맥혈전증 고려)",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the patient has swelling or pain in one leg",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_im_008",
+      "text": "최근 수술·장기 부동·장거리 여행 여부 확인 (폐색전증 위험)",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly mentions recent surgery, long travel, or prolonged immobility",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_im_009",
+      "text": "객혈 여부 확인",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the patient is coughing up blood",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_im_010",
+      "text": "빈맥 (HR > 120) 확인",
+      "severity": "important",
+      "jev_question": "The field vitals_flags.hr_over_120 is true",
+      "requires_state": [
+        "vitals_flags"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "vitals_flags.hr_over_120"
+    },
+    {
+      "id": "cp_im_011",
+      "text": "고혈압 (수축기 > 180) 확인",
+      "severity": "important",
+      "jev_question": "The field vitals_flags.sbp_over_180 is true",
+      "requires_state": [
+        "vitals_flags"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "vitals_flags.sbp_over_180"
+    },
+    {
+      "id": "cp_im_012",
+      "text": "당뇨 병력: 비전형적 발현 가능성 고려",
+      "severity": "important",
+      "jev_question": "The risk_factors list contains diabetes",
+      "requires_state": [
+        "risk_factors"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "risk_factors.diabetes"
+    },
+    {
+      "id": "cp_im_013",
+      "text": "관상동맥질환 병력 확인",
+      "severity": "important",
+      "jev_question": "The risk_factors list contains cad",
+      "requires_state": [
+        "risk_factors"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "risk_factors.cad"
+    },
+    {
+      "id": "cp_rt_001",
+      "text": "흉벽 촉진 시 압통 여부 확인 (근골격계 원인 고려)",
+      "severity": "routine",
+      "jev_question": "The symptoms text explicitly states that the chest wall is tender to touch",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_rt_002",
+      "text": "식사와 관련된 타는 듯한 통증 여부 확인 (위식도 원인 고려)",
+      "severity": "routine",
+      "jev_question": "The symptoms text explicitly states that the pain is burning and related to meals",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_rt_003",
+      "text": "불안·공황 증상 동반 여부 확인",
+      "severity": "routine",
+      "jev_question": "The symptoms text explicitly states that the patient reports anxiety or panic symptoms",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_rt_004",
+      "text": "최근 흉부 외상 여부 확인",
+      "severity": "routine",
+      "jev_question": "The symptoms text explicitly states that the patient had a recent chest injury",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "cp_rt_005",
+      "text": "증상 12시간 이상 지속: 심장 표지자 채혈 시점 고려",
+      "severity": "routine",
+      "jev_question": "The field onset_over_12h is true",
+      "requires_state": [
+        "onset_over_12h"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "onset_over_12h"
+    }
+  ]
+}

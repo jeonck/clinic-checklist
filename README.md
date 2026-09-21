@@ -22,7 +22,8 @@
 make setup          # open-jev 클론 + mlx-community/gemma-3-4b-it-4bit (~2.5 GB)
 make serve          # http://127.0.0.1:8000
 make health         # {"ok": true, ...}
-python3 -m app.main input.json --debug
+python3 -m app.main input.json --debug   # CLI
+python3 -m app.web 8080                   # 웹 UI → http://127.0.0.1:8080
 ```
 
 `input.json` 예시:

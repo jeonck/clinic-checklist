@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {"name": "web", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "app.web", "8080"], "port": 8080}
+  ]
+}

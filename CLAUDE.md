@@ -14,6 +14,7 @@ app/
   jev_client.py      system_one 단일 호출 (모든 질문 병렬)
   render.py          표시 규칙 (red flag 항상 표시)
   phi_guard.py       식별정보 차단
+  web.py, index.html 최소 웹 UI (stdlib http.server)
 eval/
   cases/*.jsonl      가상 증례 + 검토자 라벨
   run.py             지표 계산

@@ -108,3 +108,12 @@ def test_eval_cases_reference_existing_items():
     rows = [json.loads(l) for l in open(Path(__file__).parent.parent / "eval/cases/chest_pain.jsonl")]
     assert len(rows) >= 30
     assert all(e in ids for r in rows for e in r["expected_items"])
+
+
+def test_web_check_strips_probabilities_and_rejects_phi(monkeypatch):
+    from app import web
+    monkeypatch.setattr(web.jev_client, "evaluate", lambda *a: _answers(0.9))
+    plan = web.check({"chief_complaint": "chest_pain", "age": 58, "symptoms": "가슴 통증"})
+    assert plan["items"] and all("p" not in i for i in plan["items"])
+    with pytest.raises(ValueError):
+        web.check({"chief_complaint": "chest_pain", "age": 58, "symptoms": "a@b.com"})

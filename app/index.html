@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>확인 권장 항목</title>
+<style>
+  :root { --bg:#fff; --fg:#1a1a1a; --muted:#666; --line:#ddd; --red:#b3261e; --redbg:#fdecea; --amber:#8a5a00; --amberbg:#fff4d6; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#151515; --fg:#eee; --muted:#aaa; --line:#333; --red:#ff8a80; --redbg:#3a1c1a; --amber:#ffd180; --amberbg:#3a2e12; } }
+  body { margin:0; padding:16px; font:15px/1.5 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  main { max-width:880px; margin:0 auto; display:grid; gap:24px; grid-template-columns:1fr; }
+  @media (min-width:800px) { main { grid-template-columns:340px 1fr; } }
+  h1 { font-size:18px; margin:0 0 12px; }
+  form { display:grid; gap:10px; }
+  label { display:grid; gap:2px; font-size:13px; color:var(--muted); }
+  input, select, textarea { font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--fg); }
+  textarea { min-height:90px; resize:vertical; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .risks { display:flex; flex-wrap:wrap; gap:6px 12px; font-size:13px; }
+  .risks label { display:inline-flex; gap:4px; align-items:center; color:var(--fg); }
+  button { padding:10px; font:inherit; font-weight:600; border:0; border-radius:6px; background:#1f5eff; color:#fff; cursor:pointer; }
+  button:disabled { opacity:.5; }
+  .err { color:var(--red); font-size:13px; white-space:pre-wrap; }
+  .banner { padding:8px 12px; border-radius:6px; background:var(--amberbg); color:var(--amber); font-size:13px; }
+  .meta { color:var(--muted); font-size:13px; margin-bottom:8px; }
+  h2 { font-size:14px; margin:16px 0 6px; }
+  h2.rf { color:var(--red); }
+  ul { list-style:none; padding:0; margin:0; }
+  li { padding:8px 10px; border:1px solid var(--line); border-radius:6px; margin-bottom:6px; }
+  li.emph { border-color:var(--red); background:var(--redbg); font-weight:600; }
+  li.emph.im { border-color:var(--amber); background:var(--amberbg); }
+  .src { display:block; font-weight:400; font-size:12px; color:var(--muted); margin-top:2px; }
+  .src a { color:inherit; }
+  details summary { cursor:pointer; font-size:14px; margin:16px 0 6px; }
+  .disclaimer { font-size:12px; color:var(--muted); margin-top:24px; }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <h1>진료 전 체크리스트</h1>
+    <form id="f">
+      <label>주호소
+        <select name="chief_complaint"><option value="chest_pain">흉통</option><option value="other">기타</option></select>
+      </label>
+      <div class="row">
+        <label>나이 <input name="age" type="number" min="0" max="120" required value="58"></label>
+        <label>성별 <select name="sex"><option value="M">남</option><option value="F">여</option><option value="unknown">미상</option></select></label>
+      </div>
+      <label>증상 시작 후 경과 (분) <input name="onset_minutes" type="number" min="0" value="30"></label>
+      <div class="row">
+        <label>수축기 혈압 <input name="sbp" type="number" value="142"></label>
+        <label>심박수 <input name="hr" type="number" value="96"></label>
+        <label>SpO₂ (%) <input name="spo2" type="number" value="97"></label>
+        <label>체온 (℃) <input name="temp" type="number" step="0.1" value="36.8"></label>
+      </div>
+      <label>증상 (300자, 이름·생년월일·연락처 금지)
+        <textarea name="symptoms" maxlength="300" required>30분 전 시작된 가슴 중앙 압박감, 왼팔로 뻗침, 식은땀 동반</textarea>
+      </label>
+      <div class="risks" id="risks"></div>
+      <button id="go">확인 권장 항목 보기</button>
+      <div class="err" id="err"></div>
+    </form>
+  </section>
+  <section id="out"><p class="meta">입력 후 실행하세요.</p></section>
+</main>
+<script>
+const RISKS = {smoking:"흡연", hypertension:"고혈압", diabetes:"당뇨", hyperlipidemia:"고지혈증", cad:"관상동맥질환", oral_contraceptive:"경구피임약"};
+document.getElementById("risks").innerHTML = Object.entries(RISKS).map(([k,v]) => `<label><input type="checkbox" name="rf" value="${k}">${v}</label>`).join("");
+document.querySelector('input[value=smoking]').checked = document.querySelector('input[value=hypertension]').checked = true;
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const src = s => s.verified_by
+  ? `<span class="src">근거: ${esc(s.guideline)} ${esc(s.section)} <a href="${esc(s.url)}" target="_blank" rel="noopener">원문</a></span>`
+  : `<span class="src">근거: 출처 검토 대기</span>`;
+const li = it => `<li class="${it.level === "emphasized" ? "emph" : ""} ${it.severity === "important" ? "im" : ""}">${esc(it.text)}${src(it.source)}</li>`;
+const section = (items, sev, title, cls="") => {
+  const rows = items.filter(i => i.severity === sev);
+  return rows.length ? `<h2 class="${cls}">${title}</h2><ul>${rows.map(li).join("")}</ul>` : "";
+};
+
+document.getElementById("f").onsubmit = async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target), num = k => fd.get(k) === "" ? undefined : Number(fd.get(k));
+  const vitals = Object.fromEntries(["sbp","hr","spo2","temp"].map(k => [k, num(k)]).filter(([,v]) => v !== undefined));
+  const body = {chief_complaint: fd.get("chief_complaint"), age: num("age"), sex: fd.get("sex"),
+                onset_minutes: num("onset_minutes") ?? 0, vitals, symptoms: fd.get("symptoms"), risk_factors: fd.getAll("rf")};
+  const go = document.getElementById("go"), err = document.getElementById("err"), out = document.getElementById("out");
+  go.disabled = true; err.textContent = ""; out.innerHTML = `<p class="meta">확인 중…</p>`;
+  try {
+    const r = await fetch("/api/check", {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify(body)});
+    const p = await r.json();
+    if (!r.ok) throw new Error(p.error);
+    const routine = p.items.filter(i => i.severity === "routine");
+    out.innerHTML = `
+      <div class="meta">확인 권장 항목 — ${esc(p.protocol_name)} · 확인 시급도: <b>${esc(p.urgency)}</b></div>
+      ${p.protocol_uncertain ? `<div class="banner">프로토콜 불확실: 주호소를 다시 확인하세요</div>` : ""}
+      ${section(p.items, "red_flag", "반드시 확인", "rf")}
+      ${section(p.items, "important", "확인 권장")}
+      ${routine.length ? `<details><summary>고려할 항목 (${routine.length})</summary><ul>${routine.map(li).join("")}</ul></details>` : ""}
+      <p class="disclaimer">이 목록은 의사가 확인할 항목을 상기시키는 것이며, 항목마다 붙은 가이드라인 근거를 직접 검토하세요. 강조 표시는 입력된 증상과의 관련 정도를 뜻합니다.</p>`;
+  } catch (x) { err.textContent = x.message; out.innerHTML = ""; }
+  finally { go.disabled = false; }
+};
+</script>
+</body>
+</html>

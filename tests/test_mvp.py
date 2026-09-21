@@ -35,9 +35,9 @@ def test_preprocess_never_leaks_raw_values():
         preprocess.to_state({"chief_complaint": "chest_pain", "age": 30, "name": "홍길동"})
 
 
-def _answers(p_all):
+def _answers(p_all, choice="chest_pain"):
     a = {i["id"]: {"noul": p_all} for i in ITEMS}
-    a["protocol"] = {"choice": "chest_pain", "confidence": 0.9}
+    a["protocol"] = {"choice": choice, "confidence": 0.9}
     a["urgency"] = {"score": 2.4}
     return a
 
@@ -79,7 +79,7 @@ def test_state_sent_to_jev_is_slimmed_and_pinned(monkeypatch):
     assert head["model"] == body["model"] == "jev-1.13.0"
     assert set(head["state"]) == {"chief_complaint", "symptoms"} and set(body["state"]) == {"symptoms"}
     assert set(head["questions"]) == {"protocol", "urgency"} and "other" in head["questions"]["protocol"]["criteria"]
-    assert set(body["questions"]) == {i["id"] for i in ITEMS if "state_flag" not in i}
+    assert set(body["questions"]) == {i["id"] for i in ITEMS if "state_flag" not in i and i["protocol_id"] == "chest_pain"}
 
 
 def test_state_flag_items_answered_by_code(monkeypatch):
@@ -97,6 +97,29 @@ def test_state_flag_items_answered_by_code(monkeypatch):
     assert a["cp_im_012"]["noul"] == 1.0 and a["cp_im_013"]["noul"] == 0.0
 
 
+def test_only_chosen_protocol_items_asked_unless_uncertain(monkeypatch):
+    calls = []
+
+    def fake(state, questions):
+        calls.append(questions)
+        if "protocol" in questions:
+            return {"protocol": {"choice": CHOICE, "confidence": CONF}, "urgency": {"score": 1.0}}
+        return {k: {"noul": 0.1} for k in questions}
+    monkeypatch.setattr(jev_client, "_post", fake)
+    st = {"chief_complaint": "chest_pain", "symptoms": "x", "vitals_flags": {}, "risk_factors": [], "age_over_50": False}
+
+    CHOICE, CONF = "chest_pain", 0.9
+    a = jev_client.evaluate(st, PROTOS, ITEMS)
+    p = render.plan(a, ITEMS)
+    assert all(k.startswith("cp_") for k in calls[1]) and all(i["protocol_id"] == "chest_pain" for i in p["items"])
+    assert {i["id"] for i in p["items"]} == {i["id"] for i in ITEMS if i["protocol_id"] == "chest_pain" and i["severity"] == "red_flag"}
+
+    CHOICE, CONF, calls[:] = "other", 0.9, []
+    p = render.plan(jev_client.evaluate(st, PROTOS, ITEMS), ITEMS)
+    assert p["protocol_uncertain"]
+    assert {i["id"] for i in p["items"]} == {i["id"] for i in ITEMS if i["severity"] == "red_flag"}
+
+
 def test_checklist_validates_in_draft_mode():
     r = subprocess.run([sys.executable, "scripts/validate_checklist.py", "checklists/", "--allow-unverified"],
                        capture_output=True, text=True, cwd=Path(__file__).parent.parent)
@@ -105,9 +128,21 @@ def test_checklist_validates_in_draft_mode():
 
 def test_eval_cases_reference_existing_items():
     ids = {i["id"] for i in ITEMS}
-    rows = [json.loads(l) for l in open(Path(__file__).parent.parent / "eval/cases/chest_pain.jsonl")]
-    assert len(rows) >= 30
-    assert all(e in ids for r in rows for e in r["expected_items"])
+    for f in (Path(__file__).parent.parent / "eval/cases").glob("*.jsonl"):
+        rows = [json.loads(l) for l in open(f)]
+        assert len(rows) >= 30, f.name
+        assert all(e in ids for r in rows for e in r["expected_items"]), f.name
+
+
+def test_age_over_50_flag_answered_by_code(monkeypatch):
+    class R:
+        def __enter__(self): return self
+        def __exit__(self, *a): pass
+        def read(self): return json.dumps({"model": "jev-1.13.0", "answers": _answers(0.5, "headache")}).encode()
+    monkeypatch.setattr(jev_client.urllib.request, "urlopen", lambda req, timeout: R())
+    st = preprocess.to_state({"chief_complaint": "headache", "age": 67, "symptoms": "두통"})
+    assert st["age_over_50"] is True and "age" not in st
+    assert jev_client.evaluate(st, PROTOS, ITEMS)["hd_rf_008"]["noul"] == 1.0
 
 
 def test_web_check_strips_probabilities_and_rejects_phi(monkeypatch):

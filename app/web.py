@@ -11,7 +11,7 @@ from urllib.error import URLError
 
 from app import jev_client, preprocess, render
 
-INDEX = Path(__file__).with_name("index.html")
+DOCS = Path(__file__).parent.parent / "docs"  # index.html·demo.json은 GitHub Pages와 공유
 PROTOS = jev_client.load_protocols()
 ITEMS = [i for p in PROTOS.values() for i in p["items"]]
 
@@ -30,14 +30,24 @@ class H(BaseHTTPRequestHandler):
         data = body if isinstance(body, bytes) else json.dumps(body, ensure_ascii=False).encode()
         self.send_response(code)
         self.send_header("content-type", ctype)
+        self.send_header("access-control-allow-origin", "*")  # github.io 페이지에서 로컬 API 호출 허용
         self.send_header("content-length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)
 
     def do_GET(self):
         if self.path == "/":
-            return self._send(200, INDEX.read_bytes(), "text/html; charset=utf-8")
+            return self._send(200, (DOCS / "index.html").read_bytes(), "text/html; charset=utf-8")
+        if self.path == "/demo.json" and (DOCS / "demo.json").exists():
+            return self._send(200, (DOCS / "demo.json").read_bytes())
         self._send(404, {"error": "not found"})
+
+    def do_OPTIONS(self):  # CORS preflight
+        self.send_response(204)
+        self.send_header("access-control-allow-origin", "*")
+        self.send_header("access-control-allow-headers", "content-type")
+        self.send_header("access-control-allow-methods", "POST")
+        self.end_headers()
 
     def do_POST(self):
         if self.path != "/api/check":

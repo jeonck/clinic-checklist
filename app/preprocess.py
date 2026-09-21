@@ -28,6 +28,7 @@ def to_state(inp: dict) -> dict:
     return {
         "chief_complaint": inp["chief_complaint"],
         "age_band": age_band(int(inp["age"])),
+        "age_over_50": int(inp["age"]) >= 50,  # 두통 red flag용 불리언 (Jev에 나이 비교 안 시킴)
         "sex": inp.get("sex", "unknown"),
         "onset_over_12h": int(inp.get("onset_minutes", 0)) > 12 * 60,
         "vitals_flags": vitals_flags(inp.get("vitals", {})),

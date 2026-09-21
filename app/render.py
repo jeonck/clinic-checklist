@@ -1,13 +1,14 @@
 """표시 규칙. red flag는 확률과 무관하게 항상 표시 — 이 파일 밖에서 이 규칙을 우회하는 코드는 금지."""
 THRESHOLDS = {"important": 0.30, "routine": 0.50}  # jev-1.13.0 기준 시작값. 변경 시 평가 결과 첨부.
 EMPHASIS = 0.50            # red flag 강조 임계값
-LOW_CONFIDENCE_PROTOCOL = 0.50
 URGENCY_LABEL = ["일반", "수 시간 내", "긴급", "즉시"]
 
 
 def plan(answers: dict, items: list) -> dict:
     shown = []
     for it in items:
+        if it["id"] not in answers:  # evaluate()가 묻지 않은 항목 = 다른 프로토콜의 비-red-flag 항목
+            continue
         p = answers[it["id"]]["noul"]
         if it["severity"] == "red_flag":
             shown.append({**it, "p": p, "level": "emphasized" if p >= EMPHASIS else "shown"})
@@ -17,7 +18,7 @@ def plan(answers: dict, items: list) -> dict:
     proto = answers["protocol"]
     return {
         "protocol": proto["choice"],
-        "protocol_uncertain": proto["choice"] == "other" or proto["confidence"] < LOW_CONFIDENCE_PROTOCOL,
+        "protocol_uncertain": proto["choice"] == "other" or proto["confidence"] < 0.5,
         "urgency": URGENCY_LABEL[min(3, round(answers["urgency"]["score"]))],
         "items": shown,
     }

@@ -13,6 +13,7 @@ MODEL = "jev-1.13.0"  # 버전 고정. jev-latest 금지.
 BASE_URL = os.environ.get("TYPESAFE_BASE_URL", "http://127.0.0.1:8000")
 API_KEY = os.environ.get("TYPESAFE_API_KEY", "local")
 URGENCY_LEVELS = ["Routine", "Soon (within hours)", "Urgent", "Immediate"]
+LOW_CONFIDENCE_PROTOCOL = 0.50
 log = logging.getLogger("jev")
 
 
@@ -22,6 +23,8 @@ def load_protocols(root=Path(__file__).parent.parent / "checklists", production=
         p = json.loads(f.read_text(encoding="utf-8"))
         if production:  # 미검증 출처 항목은 배포 빌드에서 제외
             p["items"] = [i for i in p["items"] if i["source"]["verified_by"]]
+        for i in p["items"]:
+            i["protocol_id"] = p["protocol_id"]
         protos[p["protocol_id"]] = p
     return protos
 
@@ -53,6 +56,11 @@ def evaluate(state: dict, protocols: dict, items: list) -> dict:
                     "instructions": "How urgently this patient needs physician evaluation",
                     "criteria": URGENCY_LEVELS},
     })
+    # 선택된 프로토콜의 항목만 묻는다. 프로토콜이 불확실하면 모든 프로토콜의 red flag를 묻는다 (clinical-safety §1).
+    proto = answers["protocol"]
+    uncertain = proto["choice"] not in protocols or proto["confidence"] < LOW_CONFIDENCE_PROTOCOL
+    items = [it for it in items
+             if it["protocol_id"] == proto["choice"] or (uncertain and it["severity"] == "red_flag")]
     asked = [it for it in items if "state_flag" not in it]  # 불리언 플래그·병력 리스트는 코드가 답한다
     needed = {f for it in asked for f in it["requires_state"]}
     answers.update(_post({k: v for k, v in state.items() if k in needed},

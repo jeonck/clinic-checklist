@@ -28,10 +28,11 @@ def main():
     protos = jev_client.load_protocols()
     items = [i for p in protos.values() for i in p["items"]]
     sev = {i["id"]: i["severity"] for i in items}
-    cases = [json.loads(l) for f in sorted(Path(a.cases).glob("*.jsonl")) for l in open(f) if l.strip()]
+    cases = [dict(json.loads(l), _file=f.stem) for f in sorted(Path(a.cases).glob("*.jsonl")) for l in open(f) if l.strip()]
 
     hits = {k: [0, 0] for k in ["rf_shown", "rf_emph", "important"]}
-    proto_ok, n_shown, lat, per_case, model_seen = 0, [], [], [], set()
+    proto_ok, n_shown, lat, per_case = 0, [], [], []
+    by_file = {}  # 프로토콜별 red flag 강조 / important recall / 프로토콜 정확도
     for c in cases:
         t = time.perf_counter()
         ans = jev_client.evaluate(c["state"], protos, items)
@@ -49,8 +50,14 @@ def main():
             elif sev[e] == "important":
                 hits["important"][1] += 1; hits["important"][0] += e in shown
                 if e not in shown: misses.append(e)
+        bf = by_file.setdefault(c["_file"], {"n": 0, "proto_ok": 0, "rf": [0, 0], "im": [0, 0]})
+        bf["n"] += 1; bf["proto_ok"] += plan["protocol"] == c["expected_protocol"]
+        for e in c["expected_items"]:
+            if sev[e] == "red_flag": bf["rf"][1] += 1; bf["rf"][0] += shown.get(e) == "emphasized"
+            elif sev[e] == "important": bf["im"][1] += 1; bf["im"][0] += e in shown
         per_case.append({"case_id": c["case_id"], "protocol": plan["protocol"],
                          "protocol_conf": round(ans["protocol"]["confidence"], 3),
+                         "urgency": plan["urgency"], "shown": shown,
                          "missed": misses, "n_shown": len(shown),
                          "p": {k: round(v["noul"], 3) for k, v in ans.items() if "noul" in v}})
         print(f"{c['case_id']} {plan['protocol']:11} shown={len(shown):2} "
@@ -74,10 +81,13 @@ def main():
         if k == "p95_latency_s": st = "PASS" if v <= 1.0 else "FAIL"
         ok &= st != "FAIL"
         print(f"{k:18} {v:.3f}  {st}")
+    for f, b in by_file.items():
+        print(f"  [{f}] n={b['n']} protocol={b['proto_ok']/b['n']:.3f} "
+              f"rf_emph={b['rf'][0]/max(1,b['rf'][1]):.3f} important={b['im'][0]/max(1,b['im'][1]):.3f}")
     if a.out:
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)
         json.dump({"model": a.model, "thresholds": render.THRESHOLDS, "emphasis": render.EMPHASIS,
-                   "metrics": m, "cases": per_case}, open(a.out, "w"), ensure_ascii=False, indent=1)
+                   "metrics": m, "by_file": by_file, "cases": per_case}, open(a.out, "w"), ensure_ascii=False, indent=1)
         print("→", a.out)
     sys.exit(0 if ok else 1)
 

@@ -14,7 +14,8 @@ app/
   jev_client.py      system_one 단일 호출 (모든 질문 병렬)
   render.py          표시 규칙 (red flag 항상 표시)
   phi_guard.py       식별정보 차단
-  web.py, index.html 최소 웹 UI (stdlib http.server)
+  web.py             최소 웹 UI 서버 (docs/index.html 서빙, CORS 허용)
+docs/                GitHub Pages: index.html + demo.json (scripts/build_demo.py로 생성)
 eval/
   cases/*.jsonl      가상 증례 + 검토자 라벨
   run.py             지표 계산
@@ -45,5 +46,5 @@ pytest
 - [ ] 새 jev_question은 긍정형 단문, 판단 하나
 - [ ] PHI 가드 테스트 통과 (전화번호/이메일/날짜 패턴 거부)
 
-## 현재 범위 (MVP)
-흉통 프로토콜 1개, 항목 약 20개, 평가 증례 30개 이상. 다른 프로토콜은 흉통 지표가 합격한 뒤 추가.
+## 현재 범위
+흉통·두통 프로토콜 2개(항목 52, 증례 67). 프로토콜 추가 시 `checklists/<id>.json` + `eval/cases/<id>.jsonl` 30개 이상 + 평가 통과.

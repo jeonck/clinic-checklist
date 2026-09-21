@@ -13,6 +13,7 @@
   h1 { font-size:18px; margin:0 0 12px; }
   form { display:grid; gap:10px; }
   label { display:grid; gap:2px; font-size:13px; color:var(--muted); }
+  [hidden] { display:none !important; }
   input, select, textarea { font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--fg); }
   textarea { min-height:90px; resize:vertical; }
   .row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -39,9 +40,15 @@
 <main>
   <section>
     <h1>진료 전 체크리스트</h1>
+    <label id="demo-wrap" hidden>예시 증례 (미리 계산된 결과, 백엔드 불필요)
+      <select id="demo"><option value="">— 선택 —</option></select>
+    </label>
+    <label id="api-wrap" hidden>로컬 API 주소 (<code>python3 -m app.web</code> 실행 후)
+      <input id="api" placeholder="http://127.0.0.1:8080">
+    </label>
     <form id="f">
       <label>주호소
-        <select name="chief_complaint"><option value="chest_pain">흉통</option><option value="other">기타</option></select>
+        <select name="chief_complaint"><option value="chest_pain">흉통</option><option value="headache">두통</option><option value="other">기타</option></select>
       </label>
       <div class="row">
         <label>나이 <input name="age" type="number" min="0" max="120" required value="58"></label>
@@ -65,7 +72,8 @@
   <section id="out"><p class="meta">입력 후 실행하세요.</p></section>
 </main>
 <script>
-const RISKS = {smoking:"흡연", hypertension:"고혈압", diabetes:"당뇨", hyperlipidemia:"고지혈증", cad:"관상동맥질환", oral_contraceptive:"경구피임약"};
+const RISKS = {smoking:"흡연", hypertension:"고혈압", diabetes:"당뇨", hyperlipidemia:"고지혈증", cad:"관상동맥질환", oral_contraceptive:"경구피임약",
+               anticoagulant:"항응고제", pregnancy:"임신·산욕기", immunocompromised:"면역저하", cancer:"암 병력"};
 document.getElementById("risks").innerHTML = Object.entries(RISKS).map(([k,v]) => `<label><input type="checkbox" name="rf" value="${k}">${v}</label>`).join("");
 document.querySelector('input[value=smoking]').checked = document.querySelector('input[value=hypertension]').checked = true;
 
@@ -79,27 +87,53 @@ const section = (items, sev, title, cls="") => {
   return rows.length ? `<h2 class="${cls}">${title}</h2><ul>${rows.map(li).join("")}</ul>` : "";
 };
 
+const out = document.getElementById("out");
+const show = p => {
+  const routine = p.items.filter(i => i.severity === "routine");
+  out.innerHTML = `
+    <div class="meta">확인 권장 항목 — ${esc(p.protocol_name)} · 확인 시급도: <b>${esc(p.urgency)}</b></div>
+    ${p.protocol_uncertain ? `<div class="banner">프로토콜 불확실: 주호소를 다시 확인하세요</div>` : ""}
+    ${section(p.items, "red_flag", "반드시 확인", "rf")}
+    ${section(p.items, "important", "확인 권장")}
+    ${routine.length ? `<details><summary>고려할 항목 (${routine.length})</summary><ul>${routine.map(li).join("")}</ul></details>` : ""}
+    <p class="disclaimer">이 목록은 의사가 확인할 항목을 상기시키는 것이며, 항목마다 붙은 가이드라인 근거를 직접 검토하세요. 강조 표시는 입력된 증상과의 관련 정도를 뜻합니다.</p>`;
+};
+
+// GitHub Pages(정적)에서는 로컬 백엔드 주소를 받고, 예시 증례는 demo.json에서 미리 계산된 결과를 보여준다.
+const STATIC = !location.hostname.match(/^(localhost|127\.0\.0\.1)$/);
+const apiEl = document.getElementById("api");
+if (STATIC) { document.getElementById("api-wrap").hidden = false; try { apiEl.value = localStorage.getItem("api") || ""; } catch {} }
+apiEl.onchange = () => { try { localStorage.setItem("api", apiEl.value); } catch {} };
+const API = () => STATIC ? (apiEl.value || "http://127.0.0.1:8080").replace(/\/$/, "") : "";
+
+fetch("demo.json").then(r => r.ok ? r.json() : []).then(demo => {
+  if (!demo.length) return;
+  const sel = document.getElementById("demo");
+  document.getElementById("demo-wrap").hidden = false;
+  demo.forEach((d, i) => sel.add(new Option(`${d.case_id} · ${d.protocol_name} · ${d.summary}`, i)));
+  sel.onchange = () => {
+    const d = demo[sel.value]; if (!d) return;
+    const f = document.getElementById("f");
+    f.chief_complaint.value = d.state.chief_complaint; f.symptoms.value = d.state.symptoms; f.sex.value = d.state.sex || "unknown";
+    f.querySelectorAll('input[name=rf]').forEach(x => x.checked = d.state.risk_factors.includes(x.value));
+    show(d.plan);
+  };
+}).catch(() => {});
+
 document.getElementById("f").onsubmit = async e => {
   e.preventDefault();
   const fd = new FormData(e.target), num = k => fd.get(k) === "" ? undefined : Number(fd.get(k));
   const vitals = Object.fromEntries(["sbp","hr","spo2","temp"].map(k => [k, num(k)]).filter(([,v]) => v !== undefined));
   const body = {chief_complaint: fd.get("chief_complaint"), age: num("age"), sex: fd.get("sex"),
                 onset_minutes: num("onset_minutes") ?? 0, vitals, symptoms: fd.get("symptoms"), risk_factors: fd.getAll("rf")};
-  const go = document.getElementById("go"), err = document.getElementById("err"), out = document.getElementById("out");
+  const go = document.getElementById("go"), err = document.getElementById("err");
   go.disabled = true; err.textContent = ""; out.innerHTML = `<p class="meta">확인 중…</p>`;
   try {
-    const r = await fetch("/api/check", {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify(body)});
+    const r = await fetch(API() + "/api/check", {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify(body)});
     const p = await r.json();
     if (!r.ok) throw new Error(p.error);
-    const routine = p.items.filter(i => i.severity === "routine");
-    out.innerHTML = `
-      <div class="meta">확인 권장 항목 — ${esc(p.protocol_name)} · 확인 시급도: <b>${esc(p.urgency)}</b></div>
-      ${p.protocol_uncertain ? `<div class="banner">프로토콜 불확실: 주호소를 다시 확인하세요</div>` : ""}
-      ${section(p.items, "red_flag", "반드시 확인", "rf")}
-      ${section(p.items, "important", "확인 권장")}
-      ${routine.length ? `<details><summary>고려할 항목 (${routine.length})</summary><ul>${routine.map(li).join("")}</ul></details>` : ""}
-      <p class="disclaimer">이 목록은 의사가 확인할 항목을 상기시키는 것이며, 항목마다 붙은 가이드라인 근거를 직접 검토하세요. 강조 표시는 입력된 증상과의 관련 정도를 뜻합니다.</p>`;
-  } catch (x) { err.textContent = x.message; out.innerHTML = ""; }
+    show(p);
+  } catch (x) { err.textContent = STATIC && x instanceof TypeError ? `로컬 API에 연결할 수 없습니다 (${API()}). 예시 증례를 선택하거나 python3 -m app.web 를 실행하세요.` : x.message; out.innerHTML = ""; }
   finally { go.disabled = false; }
 };
 </script>

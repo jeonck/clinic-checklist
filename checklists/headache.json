@@ -1,0 +1,457 @@
+{
+  "protocol_id": "headache",
+  "display_name": "두통",
+  "choice_description": "Headache or head pain as the chief complaint",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "hd_rf_001",
+      "text": "벼락두통(1분 내 최고 강도) 여부 확인 (지주막하출혈 고려)",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the headache is described as 벼락두통 (thunderclap) or reached maximum intensity within one minute",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_rf_002",
+      "text": "경부 강직 여부 확인 (수막염 고려)",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the patient has a stiff neck",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_rf_003",
+      "text": "발열 (≥38℃) 확인 (수막염·전신감염 고려)",
+      "severity": "red_flag",
+      "jev_question": "The field vitals_flags.temp_over_38 is true",
+      "requires_state": [
+        "vitals_flags"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "vitals_flags.temp_over_38"
+    },
+    {
+      "id": "hd_rf_004",
+      "text": "팔·다리·얼굴 위약 여부 확인 (뇌졸중 고려)",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the patient has weakness (위약, 힘이 빠짐) in an arm, leg, or face",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_rf_005",
+      "text": "의식 변화·혼돈 여부 확인",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the patient is confused or has altered consciousness",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_rf_006",
+      "text": "경련 동반 여부 확인",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the patient had a seizure",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_rf_007",
+      "text": "두부 외상 후 발생한 두통 여부 확인",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the headache started after a head injury",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_rf_008",
+      "text": "50세 이후 새로 시작된 두통: 측두동맥염 등 고려",
+      "severity": "red_flag",
+      "jev_question": "The field age_over_50 is true",
+      "requires_state": [
+        "age_over_50"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "age_over_50"
+    },
+    {
+      "id": "hd_rf_009",
+      "text": "언어장애(어눌함·말하기 어려움) 여부 확인 (뇌졸중 고려)",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the patient has slurred speech or difficulty speaking",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_rf_010",
+      "text": "시력 소실·복시 여부 확인 (뇌졸중·측두동맥염 고려)",
+      "severity": "red_flag",
+      "jev_question": "The symptoms text explicitly states that the patient has lost vision in one or both eyes or sees double",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_im_001",
+      "text": "고혈압 (수축기 > 180) 확인",
+      "severity": "important",
+      "jev_question": "The field vitals_flags.sbp_over_180 is true",
+      "requires_state": [
+        "vitals_flags"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "vitals_flags.sbp_over_180"
+    },
+    {
+      "id": "hd_im_002",
+      "text": "면역저하 상태 확인 (감염성 원인 고려)",
+      "severity": "important",
+      "jev_question": "The risk_factors list contains immunocompromised",
+      "requires_state": [
+        "risk_factors"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "risk_factors.immunocompromised"
+    },
+    {
+      "id": "hd_im_003",
+      "text": "암 병력 확인 (전이 고려)",
+      "severity": "important",
+      "jev_question": "The risk_factors list contains cancer",
+      "requires_state": [
+        "risk_factors"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "risk_factors.cancer"
+    },
+    {
+      "id": "hd_im_004",
+      "text": "임신·산욕기 여부 확인 (자간전증·정맥동혈전 고려)",
+      "severity": "important",
+      "jev_question": "The risk_factors list contains pregnancy",
+      "requires_state": [
+        "risk_factors"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "risk_factors.pregnancy"
+    },
+    {
+      "id": "hd_im_005",
+      "text": "항응고제 복용 여부 확인 (두개내출혈 고려)",
+      "severity": "important",
+      "jev_question": "The risk_factors list contains anticoagulant",
+      "requires_state": [
+        "risk_factors"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      },
+      "state_flag": "risk_factors.anticoagulant"
+    },
+    {
+      "id": "hd_im_006",
+      "text": "'생애 최악의 두통' 표현 여부 확인",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the patient describes it as the worst headache of their life",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_im_007",
+      "text": "시각 증상 여부 확인 (복시·시력저하·시야이상)",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the patient has double vision or blurred vision",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_im_008",
+      "text": "누우면 악화되거나 수면 중 깨우는 두통 여부 확인 (두개내압 상승 고려)",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the headache is worse when lying down or wakes the patient from sleep",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_im_009",
+      "text": "운동·기침·힘주기로 유발되는 두통 여부 확인",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the headache started during or is triggered by physical exertion, coughing, or straining",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_im_010",
+      "text": "수 주에 걸쳐 점진적으로 악화되는 양상 여부 확인",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the headache has been getting progressively worse over days or weeks",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_im_011",
+      "text": "구토 동반 여부 확인",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the patient is vomiting",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_im_012",
+      "text": "측두부 압통·턱 파행 여부 확인 (측두동맥염 고려)",
+      "severity": "important",
+      "jev_question": "The symptoms text explicitly states that the patient has scalp tenderness or jaw pain when chewing",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_rt_001",
+      "text": "이전과 유사한 반복성 두통 병력 확인 (일차성 두통 고려)",
+      "severity": "routine",
+      "jev_question": "The symptoms text explicitly states that the patient has had similar headaches before",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_rt_002",
+      "text": "빛·소리 과민, 오심 동반 여부 확인 (편두통 고려)",
+      "severity": "routine",
+      "jev_question": "The symptoms text explicitly states that the patient has sensitivity to light or sound",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_rt_003",
+      "text": "진통제 과다 사용 여부 확인 (약물과용두통 고려)",
+      "severity": "routine",
+      "jev_question": "The symptoms text explicitly states that the patient takes pain medication on most days",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    },
+    {
+      "id": "hd_rt_004",
+      "text": "수면 부족·스트레스·목 근육 긴장 여부 확인",
+      "severity": "routine",
+      "jev_question": "The symptoms text explicitly states that the patient reports stress, poor sleep, or neck muscle tension",
+      "requires_state": [
+        "symptoms"
+      ],
+      "source": {
+        "guideline": "TODO",
+        "section": "TODO",
+        "url": "TODO",
+        "quote_summary": "TODO",
+        "verified_by": null,
+        "verified_at": null
+      }
+    }
+  ]
+}
